@@ -16,65 +16,6 @@ const io = require('socket.io')(server);
 // Models mongodb
 const User = require('./models/user');
 
-// Sockets connection
-let counter = 0;
-const { Usuarios } = require('./models/usuarioschat');
-const usuarios = new Usuarios();
-
-io.on('connection', client => {
-  // Counter
-      console.log("User conected")
-     	client.emit("message", "Welcome / Bienvenido")
-     	client.on("message", (info) =>{
-     	  console.log(info)
-   	  })
-   	client.on("count", () =>{
-     	counter++
-     	console.log(counter)
-     	io.emit("count", "Views counter: " + counter )
-   	})
-
-  // Chat
-  client.on('usuarioNuevo', (usuario, idm) =>{
-    let listado = usuarios.agregarUsuario(client.id, usuario, idm)
-    console.log(listado)
-    let texto = `Se ha conectado a la sala el usuario <b>${usuario}</b>`
-    io.emit('nuevoUsuario', texto )
-  })
-
-  client.on('disconnect',()=>{
-    let usuarioBorrado = usuarios.borrarUsuario(client.id)
-    let texto = `Se ha desconectado <b>${usuarioBorrado.nombre}</b>`
-    io.emit('usuarioDesconectado', texto)
-      })
-
-  client.on("texto", (text, callback) =>{
-    let usuario = usuarios.getUsuario(client.id)
-    User.findOne({_id: usuario.idm}, (err,result)=>{
-     if(err){
-       console.log(err)
-     }   let texto = `<div class="incoming_msg">
-          <div class="incoming_msg_img"> <img src="data:img/jpeg;base64,${result.avatar.toString('base64')}" alt="sunil"> </div>
-          <div class="received_msg">
-           <div class="received_withd_msg">
-             <p>${usuario.nombre} : ${text} </p> </div>`
-         io.emit("texto", (texto))
-         callback()
-    })
-  })
-
-
-
-  client.on("textoPrivado", (text, callback) =>{
-    let usuario = usuarios.getUsuario(client.id)
-    let texto = `${usuario.nombre} : ${text.mensajePrivado}`
-    let destinatario = usuarios.getDestinatario(text.destinatario)
-    client.broadcast.to(destinatario.id).emit("textoPrivado", (texto))
-    callback()
-  })
-
-});
-
 // Local localstorage
 if (typeof localStorage === "undefined" || localStorage === null) {
   var LocalStorage = require('node-localstorage').LocalStorage;
