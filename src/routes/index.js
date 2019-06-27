@@ -139,7 +139,15 @@ app.post('/loginregister', (req, res) =>{
 });
 
 app.get('/dashboarduser', (req, res) =>{
-	res.render ('dashboarduser',{})
+	Product.find({}, (err,result)=>{
+		if(err){
+			console.log(err)
+		}	
+		res.render ('dashboarduser',{
+			listarproductos: req.query.listarproductos,
+			articulos: result
+		})
+	})
 });
 
 
@@ -183,14 +191,23 @@ app.post('/register', (req, res) =>{
 });
 
 app.get('/dashboardadmin', (req, res) =>{
-	User.find({}, (err,result)=>{
+	Product.find({}, (err,result1)=>{
 		if(err){
 			console.log(err)
-		}
-		res.render ('dashboardadmin',{
-              usuarios: result
-		})
-	});
+		}	
+		User.find({}, (err,result2)=>{
+			if(err){
+				console.log(err)
+			}
+			res.render ('dashboardadmin',{
+				listar: req.query.listar,
+				listararticulos: req.query.listararticulos,
+				registrar: req.query.registrar,
+				usuarios: result2,
+				articulos: result1
+			})
+		});
+	});		
 });	
 app.get('/dashboardadmintable', (req, res) =>{
 	User.find({}, (err,result)=>{
@@ -202,28 +219,62 @@ app.get('/dashboardadmintable', (req, res) =>{
 	});	
 });
 
-app.post('/dashboardadmin', (req, res) =>{
-	
-	User.findOne({cc: req.body.busqueda},(err,results)=>{
-		if (err){
-			return console.log(err)
+// Multer destin folder
+var upload = multer({
+	limits:{
+		fileSize: 10000000
+	},
+	fileFilter(req,file,cb){
+		if(!file.originalname.match(/\.(jpg|png|jpeg|JPG|PNG|JPEG)$/)){
+			cb(new Error("No es un archivo valido"))
 		}
-		
-		if(results){
-			req.session.usuario = results
-			res.render ('dashboardupdateuser',{
-				firstnameUser: results.firstname,
-				lastnameUser: results.lastname,
-				phoneUser: results.phone,
-				rollUser: results.roll,
-				ccUser: results.cc,
-				emailUser: results.email	
+		cb(null,true)
+	  }
+})
+app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) =>{
+	if(req.query.listar){
+		User.findOne({cc: req.body.busqueda},(err,results)=>{
+			if (err){
+				return console.log(err)
+			}
+			
+			if(results){
+				req.session.usuario = results
+				res.render ('dashboardupdateuser',{
+					firstnameUser: results.firstname,
+					lastnameUser: results.lastname,
+					phoneUser: results.phone,
+					rollUser: results.roll,
+					ccUser: results.cc,
+					emailUser: results.email	
+				})
+			}
+			else {
+				res.render('dashboardadmin')
+			}	
+		})	
+	}if(req.query.registrar){
+		let producto = new Product({
+			nombre: req.body.nombre,
+			categoria: req.body.categoria,
+			precio: req.body.precio,
+			descripcion: req.body.descripcion,
+			descuento: req.body.descuento,
+			imagen: req.file.buffer
+		})
+		producto.save((err,result)=>{
+			if(err){
+				console.log(err);
+							res.render('dashboardadmin', {
+	  
+							})
+			}
+	  
+			res.render('dashboardadmin',{
+	  
 			})
-		}
-		else {
-			res.render('dashboardadmin')
-		}	
-	})
+		})
+	}
 });
 
 
@@ -278,18 +329,7 @@ app.get('/dashboardprofile', (req, res) =>{
 });
 
 
-// Multer destin folder
-var upload = multer({
-	limits:{
-		fileSize: 10000000
-	},
-	fileFilter(req,file,cb){
-		if(!file.originalname.match(/\.(jpg|png|jpeg|JPG|PNG|JPEG)$/)){
-			cb(new Error("No es un archivo valido"))
-		}
-		cb(null,true)
-	  }
-})
+
 
 app.post('/dashboardprofile', upload.single('userPhoto') ,(req, res) =>{
 

@@ -11,7 +11,43 @@ listaInscritos = [];
 listaActualizaUsuarios = [];
 
 //Listar cursos disponibles mongo (interesados)
+hbs.registerHelper('listarArticulos', (articulos) => {		
+	texto = ""
+	articulos.forEach ( art => {
+	texto =  texto + `
+	<div class="col-lg-3 col-md-6">
+                        <div class="card">
+                            <div class="el-card-item">
+									<div class="el-card-avatar el-overlay-1"> <img src="data:img/jpeg;base64,${art.imagen.toString('base64')}" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a class="btn default btn-outline image-popup-vertical-fit el-link" href="#"><i class="icon-magnifier"></i></a></li>
+											<li class="el-item"><a class="btn default btn-outline el-link" href="javascript:void(0);"><i class="icon-link"></i></a></li>
+										</ul>
+									</div>
+									</div>
+										<div class="d-flex no-block align-items-center">
+											<div class="m-l-15">
+												<h4 class="m-b-0">${art.nombre}</h4>
+												<span class="text-muted">${art.descripcion}</span>
+											</div>
+											<div class="ml-auto m-r-15">
+													<button type="button" class="btn btn-dark btn-circle">$${art.precio}</button>
+											</div>
+								       </div>
+                                 </div>
+                        </div>
+                    </div>
+	
+	
+	
+	
+`;
 
+	});
+	return texto;
+	
+});
 
 hbs.registerHelper('listarUsuarios', (usuarios) => {
 	    texto = ""
