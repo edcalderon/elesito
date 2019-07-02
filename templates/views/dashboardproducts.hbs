@@ -3,10 +3,7 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
     <!-- Sidebar-->
-    {{#if coordinador }}
-      {{>sidebardashboard}}
-    {{/if}}
-    {{#if gerente }}
+    {{#if coordinador}}
       {{>sidebardashboard}}
     {{/if}}
     <!-- Content Wrapper -->
@@ -18,18 +15,9 @@
         <!-- End of Topbar -->
         <!-- Begin Page Content -->
         <div class="container-fluid">
-        {{#if coordinador}}
-          <a class="dropdown-item" href="/register">
-          <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-          Registrar mas usuarios
-         </a>
-        {{/if}}
-
-          {{#if coordinador}}
-          <div class="card">
-            {{#if listar}}
+        {{#if gerente}}
             <div class="card-body">
-                      <div class="limiter">
+            <div class="limiter">
             <div class="container-table100">
                 <div class="wrap-table100">
                   <div class="row">     
@@ -46,45 +34,10 @@
                 </div>    
             </div>
            </div>
-           {{/if}}
-           {{#if registrar}}
-             {{>registroarticulos}}
-           {{/if}}
-           {{#if listararticulos}}
-            {{>listararticulos}}
-           {{/if}}
-          </div>  
         </div>
         <!-- /.container-fluid -->
 
         {{else}}
-          {{#if gerente}}
-                  <div class="row">
-
-        <!-- Area Chart -->
-        <div class="col-xl-12 col-lg-8">
-          <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary">he</h6>
-
-            </div>
-            <!-- Card Body -->
-            <div  id="container" class="card-body">
-                      <h2>hola gerente</h2>
-            </div>
-          </div>
-        </div>
-        <!-- Pie Chart -->
-        <!-- Content Row final space -->
-            <div class="row">
-              <!-- Content Column -->
-                <div class="col-lg-6 mb-4"></div>
-                <div class="col-lg-6 mb-4"></div>
-            </div>
-        <!-- Content Row final space-->
-      </div>
-          {{else}}
         <div class="row">
 
         <!-- Area Chart -->
@@ -97,7 +50,7 @@
             </div>
             <!-- Card Body -->
             <div  id="container" class="card-body">
-                      <h2>Ups! no tienes acceso a esta pagina logeate</h2>
+                      <h2>Ups! no tienes acceso a esta pagina logeate como gerente</h2>
             </div>
           </div>
         </div>
@@ -112,8 +65,6 @@
       </div>
 
         {{/if}}
-       
-      {{/if}} 
       </div>
       <!-- End of Main Content -->
     <!-- Footer -->

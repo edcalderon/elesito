@@ -73,7 +73,7 @@ app.post('/loginregister', (req, res) =>{
 					button: "danger"
 				})
 			}
-			if(result && bcrypt.compareSync(req.body.inputPassword, result.password) && result.roll == "administrador"){
+			if(result && bcrypt.compareSync(req.body.inputPassword, result.password) && result.roll == "administrador" || "gerente" || "bodegero"){
 
 				// session variables
 				req.session.user = result._id
@@ -83,7 +83,12 @@ app.post('/loginregister', (req, res) =>{
 				req.session.email = result.email
 				req.session.cc = result.cc
 				req.session.phone = result.phone
-				req.session.coordinador = true
+				if(result.roll == "administrador"){
+					req.session.coordinador = true
+				}
+				if(result.roll == "gerente" || "bodegero"){
+					req.session.gerente = true
+				}
 				if(result.avatar){
 					req.session.avatar = result.avatar.toString('base64')
 				}
@@ -231,6 +236,8 @@ var upload = multer({
 		cb(null,true)
 	  }
 })
+
+
 app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) =>{
 	if(req.query.listar){
 		User.findOne({cc: req.body.busqueda},(err,results)=>{
@@ -277,6 +284,17 @@ app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) =>{
 	}
 });
 
+
+app.get('/dashboardproducts', (req, res) =>{
+	Product.find({}, (err,result)=>{
+		if(err){
+			console.log(err)
+		}	
+		res.render ('dashboardproducts',{
+			productos: result
+		})
+	})
+});
 
 app.get('/dashboardupdateuser', (req, res) =>{
 	usuario = req.session.usuario

@@ -7,8 +7,17 @@ const productSchema = new Schema({
     type: String,
     required: true,
     trim: true,  
+    lowercase: true
+  },
+    codigo: {
+    type: String,
+    required: true,
+    trim: true,  
     lowercase: true,
     unique: true
+  },
+  cantidad: {
+    type: Number,
   },
   categoria: {
     type: String,

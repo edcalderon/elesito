@@ -140,6 +140,9 @@ app.use((req,res,next) => {
     if(req.session.coordinador){
       res.locals.coordinador = true
     }
+    if(req.session.gerente){
+      res.locals.gerente = true
+    }
   }
   next()
 });

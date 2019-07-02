@@ -10,19 +10,19 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="control-label">Product Name</label>
+                                        <label class="control-label">Nombre del producto</label>
                                         <input type="text" id="firstName" name="nombre" class="form-control" placeholder="ingrese el nombre del producto"> </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="control-label">Sub text</label>
-                                        <input type="text" id="lastName" class="form-control" placeholder="globe type chair for rest"> </div>
+                                        <label class="control-label">Codigo</label>
+                                        <input type="text" id="codigo"  name="codigo" class="form-control" placeholder="ingrese el codigo"> </div>
                                 </div>                       
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="control-label">Category</label>
+                                        <label class="control-label">Categoria</label>
                                         <select class="form-control" name="categoria" data-placeholder="Choose a Category" tabindex="1">
                                             <option value="Category 1">Category 1</option>
                                             <option value="Category 2">Category 2</option>
@@ -31,20 +31,13 @@
                                         </select>
                                     </div>
                                 </div>
+                                {{#if gerente}}
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Status</label>
-                                        <br/>
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
-                                            <label class="custom-control-label" for="customRadioInline1">Publish</label>
-                                        </div>
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
-                                            <label class="custom-control-label" for="customRadioInline2">Draft</label>
-                                        </div>
-                                    </div>
+                                   <div class="form-group">
+                                        <label class="control-label">Cantidad</label>
+                                        <input type="number" id="codigo"  name="cantidad" class="form-control" placeholder="ingrese una cantidad"> </div>
                                 </div>
+                                {{/if}}
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
@@ -60,6 +53,7 @@
                                 </div>
                                 <!--/span-->
                                 <div class="col-md-6">
+                                      {{#if gerente}}
                                     <div class="form-group">
                                         <label>Discount</label>
                                         <div class="input-group mb-3">
@@ -69,6 +63,7 @@
                                             <input type="text" class="form-control" name="descuento" placeholder="Discount" aria-label="Discount" aria-describedby="basic-addon2">
                                         </div>
                                     </div>
+                                      {{/if}}
                                 </div>
                                 <!--/span-->
                             </div>
