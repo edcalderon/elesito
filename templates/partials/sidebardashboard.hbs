@@ -1,4 +1,4 @@
-{{#if coordinador}}
+{{#if administrador}}
   <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
     <div class="sidebar-brand-icon rotate-n-15">
@@ -113,6 +113,7 @@
   <!-- Custom scripts for all pages-->
   <script src="js/sb-admin-2.min.js"></script>
 {{else}}
+  {{#if gerente}}
   <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
     <div class="sidebar-brand-icon rotate-n-15">
@@ -227,7 +228,8 @@
 
   </ul>
   <!-- End of Sidebar -->
-
+  {{/if}}
+{{/if}} 
   <!-- Custom scripts for all pages-->
   <script src="js/sb-admin-2.min.js"></script>
   <script>
@@ -243,5 +245,5 @@
            color = this.value;
       })
   </script>
+ 
 
-{{/if}}

@@ -3,7 +3,10 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
     <!-- Sidebar-->
-    {{#if coordinador}}
+    {{#if administrador}}
+      {{>sidebardashboard}}
+    {{/if}}
+    {{#if gerente}}
       {{>sidebardashboard}}
     {{/if}}
     <!-- Content Wrapper -->
@@ -15,28 +18,8 @@
         <!-- End of Topbar -->
         <!-- Begin Page Content -->
         <div class="container-fluid">
-        {{#if gerente}}
-            <div class="card-body">
-            <div class="limiter">
-            <div class="container-table100">
-                <div class="wrap-table100">
-                  <div class="row">     
-                    <form action="/dashboardadmin?listar=true" method="post" >	
-                        <div class="form-row">  
-                            <div class="col "><input type="text"   name="busqueda" placeholder="editar por cedula" ></div>    
-                            <div class="col "><button type="submit" class="btn btn-primary"> buscar </button></div>         
-                        </div>                      
-                    </form>
-                 </div>   
-                 <br></br>
-                 {{>usersadmintable}}
-                  </div>
-                </div>    
-            </div>
-           </div>
-        </div>
-        <!-- /.container-fluid -->
-
+        {{#if administrador}}
+              {{>productstable}}
         {{else}}
         <div class="row">
 
@@ -139,6 +122,26 @@
     </div>
   </div>
 {{/if}}
+
+<script>  
+  $(function(){       
+            $(".fa-pencil").on('click', function(){
+              var id = $(this).data("id")
+              $.ajax({
+                  method: "GET",
+                  url: `/dashboardeditararticulo?editar=${id}`
+                })
+                .done(function() {
+                    window.location = `/dashboardeditararticulo?editar=${id}`
+                })
+            });         
+  });          
+</script>
+
+            
+
+
+
 </body>
         
 </html>

@@ -9,15 +9,13 @@ const productSchema = new Schema({
     trim: true,  
     lowercase: true
   },
-    codigo: {
-    type: String,
+  codigo: {
+    type: Number,
     required: true,
-    trim: true,  
-    lowercase: true,
     unique: true
   },
   cantidad: {
-    type: Number,
+    type: Number
   },
   categoria: {
     type: String,
@@ -35,7 +33,7 @@ const productSchema = new Schema({
     lowercase: true
   },
   descuento: {
-    type: Number,
+    type: Number
   },
   imagen: {
     type: Buffer

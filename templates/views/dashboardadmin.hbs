@@ -3,10 +3,10 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
     <!-- Sidebar-->
-    {{#if coordinador }}
+    {{#if administrador }}
       {{>sidebardashboard}}
     {{/if}}
-    {{#if gerente }}
+    {{#if gerente}}
       {{>sidebardashboard}}
     {{/if}}
     <!-- Content Wrapper -->
@@ -18,14 +18,21 @@
         <!-- End of Topbar -->
         <!-- Begin Page Content -->
         <div class="container-fluid">
-        {{#if coordinador}}
+        {{#if administrador}}
           <a class="dropdown-item" href="/register">
           <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
           Registrar mas usuarios
          </a>
-        {{/if}}
 
-          {{#if coordinador}}
+        {{/if}}
+                 {{#if resultshow}}
+                      <div class="alert alert-info alert-dismissable">
+                      <a class="panel-close close" data-dismiss="alert">×</a>
+                      <i class="fa fa-coffee"></i>
+                      <strong>{{resultshow}}</strong>.
+                      </div>
+                {{/if}}
+          {{#if administrador}}
           <div class="card">
             {{#if listar}}
             <div class="card-body">
@@ -50,6 +57,7 @@
            {{#if registrar}}
              {{>registroarticulos}}
            {{/if}}
+
            {{#if listararticulos}}
             {{>listararticulos}}
            {{/if}}

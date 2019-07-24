@@ -84,10 +84,13 @@ app.post('/loginregister', (req, res) =>{
 				req.session.cc = result.cc
 				req.session.phone = result.phone
 				if(result.roll == "administrador"){
-					req.session.coordinador = true
+					req.session.administrador = true
 				}
-				if(result.roll == "gerente" || "bodegero"){
-					req.session.gerente = true
+				if(result.roll == "gerente"){
+					req.session.gerente = true				
+				}
+				if(result.roll == "bodegero"){
+					req.session.bodegero= true				
 				}
 				if(result.avatar){
 					req.session.avatar = result.avatar.toString('base64')
@@ -214,16 +217,34 @@ app.get('/dashboardadmin', (req, res) =>{
 		});
 	});		
 });	
-app.get('/dashboardadmintable', (req, res) =>{
-	User.find({}, (err,result)=>{
-		console.log(result)
-		if(err){
-			console.log(err)
-		}
-		res.json(result)
-	});	
-});
 
+
+
+
+app.get('/dashboardeditararticulo', (req, res) =>{
+	if(req.query.editar){
+		Product.findOne({_id: req.query.editar},(err,result)=>{
+			console.log(result)
+			if(err){
+				console.log(err)
+			}			
+			res.render ('dashboardeditararticulo',{
+				editar: true,
+				id:req.query.editar,
+				nombre: result.nombre,
+				codigo: result.codigo,
+				categoria: result.categoria,
+				cantidad: result.cantidad,
+				precio: result.precio,
+				descuento: result.descuento,
+				descripcion: result.descripcion,
+				imagen: result.imagen.toString('base64')
+			})
+			
+		});	
+	}
+
+});
 // Multer destin folder
 var upload = multer({
 	limits:{
@@ -236,6 +257,68 @@ var upload = multer({
 		cb(null,true)
 	  }
 })
+
+app.post('/dashboardeditararticulo', upload.single('imagenProducto') ,(req, res) =>{
+
+			var conditions = {};
+            
+			if(req.body.nombre){
+				Object.assign(conditions, {nombre : req.body.nombre})
+			}
+			if(req.body.categoria){
+				Object.assign(conditions, {categoria: req.body.categoria})
+			}
+			if(req.body.cantidad){
+				Object.assign(conditions, {cantidad : req.body.cantidad})
+			}
+			if(req.body.precio){
+				Object.assign(conditions, {precio : req.body.precio})
+			}
+			if(req.body.codigo){
+				Object.assign(conditions, {codigo : req.body.codigo})
+			}
+			if(req.body.descuento){
+				Object.assign(conditions, {descuento : req.body.descuento})
+			}
+			if(req.body.descripcion){
+				Object.assign(conditions, {descripcion : req.body.descripcion})
+			}
+			if(req.body.imagen){
+				Object.assign(conditions, {imagen : req.file.buffer})
+			}
+        
+			Product.findOneAndUpdate({codigo : req.body.codigo}, {$set: conditions}, {new:true},(err, result) => {
+				console.log(result.nombre)
+					if (err){
+						 return console.log(err);
+					 }res.render('dashboardeditararticulo', {
+						editar: true,
+						nombre: result.nombre,
+						codigo: result.codigo,
+						categoria: result.categoria,
+						cantidad: result.cantidad,
+						precio: result.precio,
+						descuento: result.descuento,
+						descripcion: result.descripcion,
+						imagen: result.imagen.toString('base64'),
+						resultshow: "Producto editado correctamente"
+					 })
+			})
+});
+
+
+
+app.get('/dashboardadmintable', (req, res) =>{
+	User.find({}, (err,result)=>{
+		console.log(result)
+		if(err){
+			console.log(err)
+		}
+		res.json(result)
+	});	
+});
+
+
 
 
 app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) =>{
@@ -264,6 +347,8 @@ app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) =>{
 		let producto = new Product({
 			nombre: req.body.nombre,
 			categoria: req.body.categoria,
+			codigo: req.body.codigo,
+			cantidad: req.body.cantidad,
 			precio: req.body.precio,
 			descripcion: req.body.descripcion,
 			descuento: req.body.descuento,
@@ -272,13 +357,12 @@ app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) =>{
 		producto.save((err,result)=>{
 			if(err){
 				console.log(err);
-							res.render('dashboardadmin', {
-	  
-							})
+				res.render('dashboardadmin', {
+					resultshow: "Error cargado producto"
+				})
 			}
-	  
 			res.render('dashboardadmin',{
-	  
+				resultshow: "Producto cargado correctamente"
 			})
 		})
 	}
