@@ -17,10 +17,12 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
           {{#if administrador}}
+            {{#unless checkout}}
           <a class="dropdown-item" href="/register">
             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
             Registrar más Usuarios
           </a>
+          {{/unless}}
           {{/if}}
           {{#if resultshow}}
           <div class="alert alert-info alert-dismissable">
