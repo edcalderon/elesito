@@ -304,20 +304,20 @@ app.post('/createproduct', upload.single('imagenProducto'), (req, res) => {
 	const {
 		nombre, categoria, descripcion, precio,
 	} = req.body;
-	var codigo = randomStr(10,'12345abcde')
-	function randomStr(len, arr) { 
-		var ans = ''; 
-		for (var i = len; i > 0; i--) { 
-			ans +=  
-			  arr[Math.floor(Math.random() * arr.length)]; 
-		} 
-		return ans; 
-	} 
+	var codigo = randomStr(10, '12345abcde')
+	function randomStr(len, arr) {
+		var ans = '';
+		for (var i = len; i > 0; i--) {
+			ans +=
+				arr[Math.floor(Math.random() * arr.length)];
+		}
+		return ans;
+	}
 	const product = new Product({
 		nombre, codigo, categoria, imagen: req.file.buffer, descripcion, precio
 	});
 
-	Product.findOne({nombre}, (err, result) => {
+	Product.findOne({ nombre }, (err, result) => {
 		if (err) {
 			return console.log(err);
 		}
@@ -344,7 +344,7 @@ app.post('/createproduct', upload.single('imagenProducto'), (req, res) => {
 		}
 	});
 
-	
+
 });
 app.post('/deleteproduct', (req, res) => {
 	const { id } = req.body;
@@ -365,23 +365,29 @@ app.post('/deleteproduct', (req, res) => {
 });
 
 app.get('/shopingcart', (req, res) => {
-	const { id } = req.query;
+	const { id, sede } = req.query;
 	Product.findOne({ _id: id }, (err, product) => {
 		if (err) {
 			console.log(err);
 		}
+		product.sede = sede;
 		if (req.session.shopingcart) {
-			const result = req.session.shopingcart.filter(producto => producto._id === id);
+			const result = req.session.shopingcart.filter(producto => producto._id === id && producto.sede == sede);
+			console.log(result);
 			if (result.length === 0) {
 				req.session.shopingcart.push(product);
+				res.json(product);
+			} else {
+				res.json(null);
 			}
 		} else {
 			req.session.shopingcart = [];
 			req.session.shopingcart.push(product);
+			res.json(product);
 		}
-		res.json(product);
 	});
 });
+
 
 app.get('/checkout', (req, res) => {
 	res.render('dashboardadmin', {
@@ -441,26 +447,46 @@ app.get('/dashboardadmintable', (req, res) => {
 });
 
 app.get('/findUser', (req, res) => {
-	if(!req.query.updatePoints){
+	if (!req.query.updatePoints) {
 		User.findOne({ cc: req.query.cedula }, (err, result) => {
 			if (err) {
 				console.log(err);
-			} 
+			}
 			res.json(result);
 		});
 	}
-	if(req.query.updatePoints){
-		User.findOneAndUpdate({ cc: req.query.cedula }, { $inc: { esiPuntos: req.query.updatePoints } }, { new: true },(err, result) => {
+	if (req.query.updatePoints) {
+		User.findOneAndUpdate({ cc: req.query.cedula }, { $inc: { esiPuntos: req.query.updatePoints } }, { new: true }, (err, result) => {
 			if (err) {
 				console.log(err);
-			} 
+			}
 			res.json(result);
 		});
 	}
-
-
 });
 
+app.get('/pay', (req, res) => {
+	const data = req.query.productos;
+	const productos = JSON.parse(data);
+	let count = 1;
+	productos.forEach((producto) => {
+		const { nombre, sede, cantidad } = producto;
+		Product.findOne({ nombre: producto.nombre }, (err, result) => {
+			if (err) return console.log(err);
+			const test = result.cantidad;
+			test[sede] -= parseInt(cantidad, 10);
+			Product.updateOne({ nombre }, { $set: { cantidad: test } }, (error) => {
+				if (error) return console.log(err);
+				if (count === productos.length) {
+					req.session.shopingcart = [];
+					res.json({});
+				} else {
+					count += 1;
+				}
+			});
+		});
+	});
+});
 app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) => {
 	if (req.query.listar) {
 		User.findOne({ cc: req.body.busqueda }, (err, results) => {

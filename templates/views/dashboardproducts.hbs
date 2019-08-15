@@ -115,15 +115,16 @@ $(function(){
                       $(`#${id}`).remove()
                       toastr.success(`productos: ${e.nombre} borrado correctamente`);  
                   })
-            });  
+            });
             $(".cartshop").on('click', function(){ 
-              id = $(this).data("id") 
+              id = $(this).data("id");
+              sede = $(this).data("sede");
               $.ajax({
                   method: "GET",
-                  url: `/shopingcart?id=${id}`
+                  url: `/shopingcart?id=${id}&sede=${sede}`
                   })
                   .done(function(product) {
-                    console.log(product.imagen.base64)
+                    if(product)
                       $(`#mini-cart`).append(`<a class="dropdown-item" href="#">
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-3 text-center">
@@ -149,7 +150,7 @@ $(function(){
                       toastr.success(`producto añadido`);  
                   })
               
-            })          
+            })   
 });
 
  

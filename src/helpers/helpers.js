@@ -53,9 +53,10 @@ hbs.registerHelper('listarProductosCart', (productos, cant) => {
 			<h5 class="font-500">${art.nombre}</h5>
 			<p>${art.descripcion}</p>
 		</td>
+		<td>${art.sede}</td>
 		<td id="precio-${i}">$${art.precio}</td>
 		<td width="70" onclick="total(${i});">
-			<input type="text" id="input-${i}" onchange="total(${i});" class="form-control" placeholder="1" value="${cant}">
+			<input type="text" id="input-${i}" onchange="total(${i});" class="input form-control" placeholder="1" value="${cant}">
 		</td>
 		<td width="150" align="center" id="total-${i}" class="font-500 totalItem">${art.precio}</td>
 		<td align="center"><a href="javascript:void(0)" class="text-inverse" title="" data-toggle="tooltip" data-original-title="Delete"><i class="ti-trash text-dark"></i></a></td>
@@ -89,19 +90,25 @@ hbs.registerHelper('listarProductos', (productos) => {
 	let texto = '';
 	if (productos) {
 		productos.forEach((prod) => {
-			texto += `<tr id="${prod._id}" role="row" class="odd">
-			 <td class="sorting_1">${prod.nombre}</td>
-			 <td>${prod.categoria}</td>
-			 <td>${prod.precio}</td>
-			 <td class="cell100 column4">   
-				 <div class="inblock" >
-				 <i id="edit" data-id="${prod._id}" class="fa fa-pencil" ></i>
-				 <i id="delete" data-id="${prod._id}" class="fa fa-trash"></i>
-				 <i id="shop" data-id="${prod.id}" class="fa fa-cart-plus cartshop"></i>
-				 <input type="checkbox" data-id="${prod._id}" class="check"/> 
-				 </div>
-			 </td>
-			</tr>`;
+			prod.sede.forEach((city) => {
+				texto += `
+				<form action="/updatestock" method="get>
+					<tr role="row" class="odd">
+						<td class="sorting_1 col-6">${prod.nombre}</td>
+						<td class="col-md-auto">${prod.precio}</td>
+						<td>${city}</td>
+						<td class="cell100 column4">   
+							<div class="inblock" >
+							<i id="edit" data-id="${prod._id}" class="fa fa-pencil" ></i>
+							<i id="delete" data-id="${prod._id}" class="fa fa-trash"></i>
+							<i id="shop" data-id="${prod.id}"  data-sede="${city}"class="fa fa-cart-plus cartshop"></i>
+							<input type="checkbox" data-id="${prod._id}" class="check"/> 
+							</div>
+						</td>
+					</tr>
+				</form>
+			`;
+			});
 		});
 	}
 	return texto;

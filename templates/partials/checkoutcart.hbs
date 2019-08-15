@@ -11,11 +11,12 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table product-overview">
+                        <table id="table" class="table product-overview">
                             <thead>
                                 <tr>
                                     <th>Imágen</th>
                                     <th>Información del Producto</th>
+                                    <th>Sede</th>
                                     <th>Precio</th>
                                     <th>Cantidad</th>
                                     <th style="text-align:center">Total</th>
@@ -23,13 +24,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#if productos}} {{{listarProductosCart productos cant}}} {{else}} "No tienes productos en eu carrito, ve y compra!" {{/if}}
+                                {{#if productos}} {{{listarProductosCart productos cant}}} {{else}} "No tienes productos
+                                en eu carrito, ve y compra!" {{/if}}
                             </tbody>
                         </table>
                         <hr>
                         <div class="d-flex no-block align-items-center">
-                            <button class="btn btn-dark btn-outline" onclick="window.location.href='/dashboardproducts'"><i
-                                    class="fas fa-arrow-left"></i>
+                            <button class="btn btn-dark btn-outline"
+                                onclick="window.location.href='/dashboardproducts'"><i class="fas fa-arrow-left"></i>
                                 Continua Comprando</button>
                         </div>
                     </div>
@@ -48,15 +50,16 @@
                     <input type="number" id="totalCompra" value="{{{sum productos}}}" hidden>
                     <hr>
                     <h5>Paga con: </h5>
-                    <button id='Efectivo-button' class="btn btn-primary" type='button' data-toggle="modal" data-target="modal-TotalCost">Efectivo</button>
+                    <button id='Efectivo-button' class="btn btn-primary" type='button' data-toggle="modal"
+                        data-target="modal-TotalCost">Efectivo</button>
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Tarjeta
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Crédito</a>
-                            <a class="dropdown-item" href="#">Débito</a>
+                            <a id="credito" class="dropdown-item" href="#">Crédito</a>
+                            <a id="debito" class="dropdown-item" href="#">Débito</a>
                         </div>
                     </div>
                 </div>
@@ -65,7 +68,8 @@
                 <div class="card-body">
                     <h5 class="card-title">Información de Soporte</h5>
                     <hr>
-                    <h4><i class="ti-mobile"></i>Tel: 3255566</h4> <small>Por favor contactanos si tienen preguntas. Estamos
+                    <h4><i class="ti-mobile"></i>Tel: 3255566</h4> <small>Por favor contactanos si tienen preguntas.
+                        Estamos
                         disponibles 24h.</small>
                 </div>
             </div>
@@ -94,41 +98,62 @@
         const totalBruto = document.getElementById("totalBruto");
         const efectivo = document.getElementById("efectivo");
         const cambio = document.getElementById("cambio");
-        const total = parseInt(efectivo.value) - parseInt(totalBruto.innerText);    
+        const total = parseInt(efectivo.value.replace("$", "")) - parseInt(totalBruto.innerText.replace("$", ""));
         cambio.innerText = total;
     }
     function cliente() {
         const cedula_cliente = document.getElementById("cedula_cliente");
         const totalBruto = document.getElementById("totalBruto").value;
-        var puntos = parseInt(totalNeto/2000)
+        var puntos = parseInt(totalNeto / 2000)
         $.ajax({
             method: "GET",
             url: `/findUser?cedula=${cedula_cliente.value}`
         })
-        .done(function(e) {  
-            $("#puntos").append(`<div class="form-group">
+            .done(function (e) {
+                $("#puntos").append(`<div class="form-group">
                         <label for="recipient-name" class="col-form-label">Se abonaran <strong>${puntos}</strong> super esiPuntos a:</label>
                         <input type="text" onchange="cliente();"  placeholder=${e.firstname} class="form-control" readonly="readonly">
                     </div>`)
-            $("#button-pagar").click(function (){
-                $.ajax({
-                    method: "GET",
-                    url: `/findUser?cedula=${cedula_cliente.value}&updatePoints=${puntos}`
-                })
-                .done(function(res) {  
-                    console.log(res.esiPuntos)
-                    $("#modal-TotalCost").modal('hide');
-                    $("#notifications").append(`  <div class="alert alert-success">
+                $("#button-pagar").click(function () {
+                    $.ajax({
+                        method: "GET",
+                        url: `/findUser?cedula=${cedula_cliente.value}&updatePoints=${puntos}`
+                    })
+                        .done(function (res) {
+                            console.log(res.esiPuntos)
+                            $("#modal-TotalCost").modal('hide');
+                            $("#notifications").append(`  <div class="alert alert-success">
                                                    <a href="/dashboardprofile"><strong>Esito!</strong> has acumulado ${puntos} puntos</a> 
                                                   </div>
                                                `)
-                })
-            });
-        })
+                        })
+
+                    var productos = [];
+                    $('#table tr').each(function (row, tr) {
+                        const nombre = $(tr).find('td:eq(1)>h5').text();
+                        const sede = $(tr).find('td:eq(2)').text();
+                        const cantidad = $(tr).find('.input').val();
+                        productos.push({ nombre, sede, cantidad });
+                    });
+                    productos.shift();
+                    $.ajax({
+                        method: "GET",
+                        data: { 'productos': JSON.stringify(productos) },
+                        url: `/pay`,
+                    }).done(function (e) {
+                        toastr.success(`Pago realizado`);
+                        window.location = `/dashboardproducts`;
+                    })
+                });
+            })
     }
 </script>
 
-<div class="modal fade" id="modal-TotalCost" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+<div class="modal fade" id="modal-TotalCost" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -141,17 +166,18 @@
                 <form>
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Efectivo Recibido:</label>
-                        <input type="text" onchange="devuelta()"  class="form-control" id="efectivo">
+                        <input type="text" onchange="devuelta()" class="form-control" id="efectivo">
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Cambio a entregar:</label>
                         <textarea class="form-control" id="cambio"></textarea>
                     </div>
                 </form>
-                <form  id="puntos">
+                <form id="puntos">
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Tienes esiPuntos?:</label>
-                        <input type="text" onchange="cliente()"  placeholder="Cedula titular esipuntos" class="form-control" id="cedula_cliente">
+                        <input type="text" onchange="cliente()" placeholder="Cedula titular esipuntos"
+                            class="form-control" id="cedula_cliente">
                     </div>
                 </form>
             </div>
@@ -168,6 +194,45 @@
         $("#Efectivo-button").click(function () {
             $("#modal-TotalCost").modal('show');
         });
-
+    });
+    $(document).ready(function () {
+        $("#credito").click(function () {
+            var productos = [];
+            $('#table tr').each(function (row, tr) {
+                const nombre = $(tr).find('td:eq(1)>h5').text();
+                const sede = $(tr).find('td:eq(2)').text();
+                const cantidad = $(tr).find('.input').val();
+                productos.push({ nombre, sede, cantidad });
+            });
+            productos.shift();
+            $.ajax({
+                method: "GET",
+                data: { 'productos': JSON.stringify(productos) },
+                url: `/pay`,
+            }).done(function (e) {
+                toastr.success(`Pago realizado`);
+                window.location = `/dashboardproducts`;
+            })
+        });
+    });
+    $(document).ready(function () {
+        $("#debito").click(function () {
+            var productos = [];
+            $('#table tr').each(function (row, tr) {
+                const nombre = $(tr).find('td:eq(1)>h5').text();
+                const sede = $(tr).find('td:eq(2)').text();
+                const cantidad = $(tr).find('.input').val();
+                productos.push({ nombre, sede, cantidad });
+            });
+            productos.shift();
+            $.ajax({
+                method: "GET",
+                data: { 'productos': JSON.stringify(productos) },
+                url: `/pay`,
+            }).done(function (e) {
+                toastr.success(`Pago realizado`);
+                window.location = `/dashboardproducts`;
+            })
+        });
     });
 </script> {{!-- cierra modal --}}

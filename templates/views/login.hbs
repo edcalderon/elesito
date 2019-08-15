@@ -54,14 +54,15 @@
                     </div>
                       <input type="hidden" name="registro"  value="registro">
                       <input type="hidden" name="login"  value="login">
-                      <input type="submit" class="btn btn-primary btn-user btn-block"  value="Entrar" >
+                      <input type="submit" class="btn btn-primary btn-user btn-block"  value="Iniciar" >
+                      <br>
+                      <div class="text-center">
+                        <a class="btn btn-primary btn-user btn-block" href="/indexdashboard" role="button">Cancelar</a>
+                      </div>
                   </form>
                   <hr>
                     <div class="text-center">
-                      <a class="small" href="#">Olvidaste tu contraseña?</a>
-                    </div>
-                    <div class="text-center">
-                      <a class="small" href="/indexdashboard">Volver</a>
+                      <a class="small" href="#" onclick="alertaAdmin();">Olvidaste tu contraseña?</a>
                     </div>
                   <hr>
                 </div>
@@ -72,6 +73,19 @@
       </div>
     </div>
   </div>
+
+
+<script>
+function alertaAdmin(){
+  var user = prompt("Introduce tu nombre de usuario:", "");
+
+  if (user == null || user == "") {
+    window.alert("El usuario no es válido.");
+  } else {
+    window.alert("El administrador ha sido notificado.");
+  }
+}
+</script>
 
 {{#if login}}
 <script>
