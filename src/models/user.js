@@ -64,8 +64,8 @@ const userSchema = new Schema({
 	},
 	esiPuntos: {
 		type: Number,
-		default: 0
-	}
+		default: 0,
+	},
 });
 
 // create mongoose model

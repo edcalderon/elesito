@@ -20,7 +20,7 @@ if (typeof localStorage === 'undefined' || localStorage === null) {
 // Session
 app.use(session({
 	secret: 'keyboard cat',
-	resave: false,
+	resave: true,
 	saveUninitialized: true,
 }));
 

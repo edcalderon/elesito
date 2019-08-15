@@ -70,7 +70,7 @@ app.post('/login', (req, res) => {
 			});
 		} else if (result.roll === 'administrador') {
 			// session variables
-			req.session.id = result._id;
+			req.session.id = result._id
 			req.session.user = result.user;
 			req.session.sede = result.sede;
 			req.session.roll = result.roll;
@@ -81,8 +81,6 @@ app.post('/login', (req, res) => {
 			req.session.phone = result.phone;
 			req.session.esiPuntos = result.esiPuntos;
 			req.session.administrador = true;
-			console.log(result._id)
-			console.log(req.session.id)
 			if (result.avatar) {
 				req.session.avatar = result.avatar.toString('base64');
 			}
@@ -93,6 +91,7 @@ app.post('/login', (req, res) => {
 				button: 'success',
 			});
 		} else if (result.roll === 'gerente') {
+
 			// session variables
 			req.session.id = result._id;
 			req.session.user = result.user;
