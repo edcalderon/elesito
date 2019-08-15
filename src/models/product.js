@@ -35,7 +35,7 @@ const productSchema = new Schema({
 		lowercase: true,
 	},
 	imagen: {
-		type: Buffer,
+		type: Object,
 	},
 	sede: {
 		type: Array,

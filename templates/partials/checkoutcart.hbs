@@ -1,8 +1,38 @@
 <<<<<<< HEAD
 
 
-=======
->>>>>>> 930a584a80dfb93d2b45b28dce9bf20107dfc3c0
+    alert("Funciono!");
+
+    $(function () {
+        alert("Hello World!");
+    });
+</script> {{/section}}
+
+<script>
+    var total = function (id) {
+        console.log("Prueba-" + id);
+        var precio = document.getElementById("precio-" + id);
+        var input = document.getElementById("input-" + id);
+        var tt = document.getElementById("total-" + id);
+        tt.innerText = parseInt(precio.innerText.substr(1)) * parseInt(input.value);
+        var items = document.getElementsByClassName("totalItem");
+        var totalNeto = 0;
+        for (var i = 0; i < items.length; i++) {
+            totalNeto += parseInt(items[i].innerText);
+        }
+        var totalBruto = document.getElementById("totalBruto");
+        totalBruto.innerText = totalNeto;
+    }
+
+    const devuelta = function (id) {
+        const totalBruto = document.getElementById("totalBruto");
+        const efectivo = document.getElementById("efectivo");
+        const cambio = document.getElementById("cambio");
+        const total = parseInt(efectivo.value) - parseInt(totalBruto.innerText);
+
+        cambio.innerText = total;
+    }
+</script>
 <div class="container-fluid">
     <!-- ============================================================== -->
     <!-- Start Page Content -->
@@ -16,15 +46,15 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table product-overview">
+                        <table id="table" class="table product-overview">
                             <thead>
                                 <tr>
                                     <th>Imágen</th>
-                                    <th>Información del Producto</th>
+                                    <th>Producto</th>
+                                    <th>Sede</th>
                                     <th>Precio</th>
                                     <th>Cantidad</th>
                                     <th style="text-align:center">Total</th>
-                                    <th style="text-align:center">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -33,8 +63,8 @@
                         </table>
                         <hr>
                         <div class="d-flex no-block align-items-center">
-                            <button class="btn btn-dark btn-outline" onclick="window.location.href='/dashboardproducts'"><i
-                                    class="fas fa-arrow-left"></i>
+                            <button class="btn btn-dark btn-outline"
+                                onclick="window.location.href='/dashboardproducts'"><i class="fas fa-arrow-left"></i>
                                 Continua Comprando</button>
                         </div>
                     </div>
@@ -55,7 +85,8 @@
 <<<<<<< HEAD
                     <button id="Efectivo-button" class="btn btn-primary" type="button" data-toggle="modal" data-target="modal-TotalCost">Efectivo</button>
                     {{!-- <button class="btn btn-secondary btn-outline">Credito</button> --}} {{!-- modal --}}
-                    <div class="modal fade" id="modal-TotalCost" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="modal-TotalCost" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -91,19 +122,59 @@
                                 $("#modal-TotalCost").modal();
                             });
                         });
+                        $(document).ready(function () {
+                            $("#credito").click(function () {
+                                var productos = [];
+                                $('#table tr').each(function (row, tr) {
+                                    const nombre = $(tr).find('td:eq(1)>h5').text();
+                                    const sede = $(tr).find('td:eq(2)').text();
+                                    const cantidad = $(tr).find('.input').val();
+                                    productos.push({ nombre, sede, cantidad });
+                                });
+                                productos.shift();
+                                $.ajax({
+                                    method: "GET",
+                                    data: { 'productos': JSON.stringify(productos) },
+                                    url: `/pay`,
+                                }).done(function (e) {
+                                    window.location = `/dashboardproducts`;
+                                    toastr.success(`Pago realizado`);
+                                })
+                            });
+                        });
+                        $(document).ready(function () {
+                            $("#debito").click(function () {
+                                var productos = [];
+                                $('#table tr').each(function (row, tr) {
+                                    const nombre = $(tr).find('td:eq(1)>h5').text();
+                                    const sede = $(tr).find('td:eq(2)').text();
+                                    const cantidad = $(tr).find('.input').val();
+                                    productos.push({ nombre, sede, cantidad });
+                                });
+                                productos.shift();
+                                $.ajax({
+                                    method: "GET",
+                                    data: { 'productos': JSON.stringify(productos) },
+                                    url: `/pay`,
+                                }).done(function (e) {
+                                    window.location = `/dashboardproducts`;
+                                    toastr.success(`Pago realizado`);
+                                })
+                            });
+                        });
                     </script> {{!-- cierra modal --}}
 
 =======
                     <button id='Efectivo-button' class="btn btn-primary" type='button' data-toggle="modal" data-target="modal-TotalCost">Efectivo</button>
 >>>>>>> 930a584a80dfb93d2b45b28dce9bf20107dfc3c0
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Tarjeta
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Crédito</a>
-                            <a class="dropdown-item" href="#">Débito</a>
+                            <a id="credito" class="dropdown-item">Crédito</a>
+                            <a id="debito" class="dropdown-item">Débito</a>
                         </div>
                     </div>
                 </div>
@@ -112,7 +183,8 @@
                 <div class="card-body">
                     <h5 class="card-title">Información de Soporte</h5>
                     <hr>
-                    <h4><i class="ti-mobile"></i>Tel: 3255566</h4> <small>Por favor contactanos si tienen preguntas. Estamos
+                    <h4><i class="ti-mobile"></i>Tel: 3255566</h4> <small>Por favor contactanos si tienen preguntas.
+                        Estamos
                         disponibles 24h.</small>
                 </div>
             </div>
