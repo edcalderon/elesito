@@ -393,6 +393,7 @@ app.get('/checkout', (req, res) => {
 		checkout: true,
 		productos: req.session.shopingcart,
 		cant: 1,
+		cedula: req.session.cc
 	});
 });
 
@@ -427,10 +428,11 @@ app.get('/findUser', (req, res) => {
 		});
 	}
 	if (req.query.updatePoints) {
-		User.findOneAndUpdate({ cc: req.query.cedula }, { $inc: { esiPuntos: req.query.updatePoints } }, { new: true }, (err, result) => {
+		User.findOneAndUpdate({ cc: req.query.cedula }, { esiPuntos: req.query.updatePoints} , { new: true }, (err, result) => {
 			if (err) {
 				console.log(err);
 			}
+			req.session.esiPuntos = req.query.updatePoints
 			res.json(result);
 		});
 	}
@@ -474,6 +476,7 @@ app.get('/dashboardadmin', (req, res) => {
 				registrar: req.query.registrar,
 				usuarios: result2,
 				articulos: result1,
+				esiPuntos: result2.esiPuntos
 			});
 		});
 	});

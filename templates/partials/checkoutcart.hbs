@@ -50,8 +50,8 @@
                     <input type="number" id="totalCompra" value="{{{sum productos}}}" hidden>
                     <hr>
                     <h5>Paga con: </h5>
-                    <button id='Efectivo-button' class="btn btn-primary" type='button' data-toggle="modal"
-                        data-target="modal-TotalCost">Efectivo</button>
+                    <button id='Efectivo-button' class="btn btn-primary" type='button' data-toggle="modal" data-target="modal-TotalCost">Efectivo</button>
+                    <button id='puntos-button' class="btn btn-primary" type='button' data-toggle="modal" data-target="modal-TotalCost-puntos">Puntos</button>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -78,7 +78,12 @@
 </div>
 
 <script>
+    var cedula = {{cedula}}
     var totalNeto = 0;
+    var esiPuntos = {{esiPuntos}}
+    var totalBruto = document.getElementById("totalCompra").value;
+    var esiPuntosViables = parseInt((totalBruto/200)/2)
+
     var total = function (id) {
         var precio = document.getElementById("precio-" + id);
         var input = document.getElementById("input-" + id);
@@ -101,20 +106,35 @@
         const total = parseInt(efectivo.value.replace("$", "")) - parseInt(totalBruto.innerText.replace("$", ""));
         cambio.innerText = total;
     }
+    function pagarConPuntos() {
+        const totalBruto = document.getElementById("totalCompra").value;
+        const esiPuntosAgastar = document.getElementById("puntos-usar").value;
+        console.log(esiPuntosViables)
+        if(esiPuntosAgastar <= esiPuntosViables ){
+            var total = parseInt(totalBruto - esiPuntosAgastar*200)    
+            $("#nuevo-total").val(total) 
+            totalNeto = total
+        }else{
+            console.log("inviable")  
+        }
+        
+    }
     function cliente() {
         const cedula_cliente = document.getElementById("cedula_cliente");
         const totalBruto = document.getElementById("totalBruto").value;
-        var puntos = parseInt(totalNeto / 2000)
-        $.ajax({
-            method: "GET",
-            url: `/findUser?cedula=${cedula_cliente.value}`
-        })
+        const totalNeto  = document.getElementById("totalCompra").value;
+        var puntos_nuevos = parseInt(totalNeto / 2000)
+            $.ajax({
+                method: "GET",
+                url: `/findUser?cedula=${cedula_cliente.value}`
+            })
             .done(function (e) {
                 $("#puntos").append(`<div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Se abonaran <strong>${puntos}</strong> super esiPuntos a:</label>
+                        <label for="recipient-name" class="col-form-label">Se abonaran <strong>${puntos_nuevos}</strong> super esiPuntos a:</label>
                         <input type="text" onchange="cliente();"  placeholder=${e.firstname} class="form-control" readonly="readonly">
                     </div>`)
                 $("#button-pagar").click(function () {
+                    puntos = esiPuntos + puntos_nuevos
                     $.ajax({
                         method: "GET",
                         url: `/findUser?cedula=${cedula_cliente.value}&updatePoints=${puntos}`
@@ -123,7 +143,7 @@
                             console.log(res.esiPuntos)
                             $("#modal-TotalCost").modal('hide');
                             $("#notifications").append(`  <div class="alert alert-success">
-                                                   <a href="/dashboardprofile"><strong>Esito!</strong> has acumulado ${puntos} puntos</a> 
+                                                   <a href="/dashboardprofile"><strong>Esito!</strong> has acumulado ${puntos_nuevos} puntos</a> 
                                                   </div>
                                                `)
                         })
@@ -143,6 +163,7 @@
                     }).done(function (e) {
                         toastr.success(`Pago realizado`);
                     })
+                    $("tbody").empty()
                 });
             })
     }
@@ -188,11 +209,82 @@
     </div>
 </div>
 
+<div class="modal fade" id="modal-TotalCost-puntos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Paga con puntos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">El valor a pagar es:</label>
+                        <input id="valor-a-pagar" type="number" readonly="readonly" class="form-control" >
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Esipuntos disponibles:</label>
+                        <input type="text" placeholder={{esiPuntos}} readonly="readonly" class="form-control" id="puntos">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Max. esipuntos que puedes gastar: (mitad costo total)</label>
+                        <input id="puntos-viables" type="number"  readonly="readonly"  class="form-control" >
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Cuantos puntos deseas usar?: (1esi = 200COP):</label>
+                        <input type="number"  onchange="pagarConPuntos()" class="form-control" id="puntos-usar">
+                    </div>
+                </form>
+                <form >
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Tu nuevo total es:</label>
+                        <input id="nuevo-total" type="number" readonly="readonly"  class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="button-pagar-con-puntos" class="btn btn-primary">Pagar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
         $("#Efectivo-button").click(function () {
             $("#modal-TotalCost").modal('show');
         });
+        $("#puntos-button").click(function () {
+            $("#modal-TotalCost-puntos").modal('show')
+            $("#valor-a-pagar").val(totalBruto) 
+            $("#puntos-viables").val(esiPuntosViables)   
+        });
+        $("#button-pagar-con-puntos").click(function () {
+            puntos_usar = $("#puntos-usar").val()
+            puntos = esiPuntos - puntos_usar
+            console.log(puntos)
+            $.ajax({
+                method: "GET",
+                url: `/findUser?cedula=${cedula}&updatePoints=${puntos}`
+            })
+            .done(function (res) {
+                console.log(res.esiPuntos)
+                $("#modal-TotalCost").modal('hide');
+                $("#notifications").append(`  <div class="alert alert-warning">
+                                        <a href="/dashboardprofile"><strong>Esito!</strong> has gastado ${puntos_usar} puntos</a> 
+                                        </div>
+                                    `)
+            })
+            $("#totalBruto").html("$"+totalNeto) // 
+            $("#totalCompra").val(totalNeto)  
+            $("tbody").empty()
+            $("#modal-TotalCost-puntos").modal('hide');
+        });    
+
     });
     $(document).ready(function () {
         $("#credito").click(function () {
