@@ -60,6 +60,7 @@ app.post('/login', (req, res) => {
 				show: 'Usuario o contraseña incorrectas',
 				path: '/login',
 				button: 'danger',
+				icon: 'close',
 			});
 		} else if (!bcrypt.compareSync(req.body.inputPassword, result.password)) {
 			res.render('login', {
@@ -67,6 +68,7 @@ app.post('/login', (req, res) => {
 				show: 'Usuario o contraseña incorrectas',
 				path: '/login',
 				button: 'danger',
+				icon: 'close',
 			});
 		} else if (result.roll === 'administrador') {
 			// session variables
@@ -89,6 +91,7 @@ app.post('/login', (req, res) => {
 				show: 'Bienvenido Administrador',
 				path: '/dashboardadmin',
 				button: 'success',
+				icon: 'circle',
 			});
 		} else if (result.roll === 'gerente') {
 
@@ -112,6 +115,7 @@ app.post('/login', (req, res) => {
 				show: 'Bienvenido Gerente',
 				path: '/dashboardgerente',
 				button: 'success',
+				icon: 'circle',
 			});
 		} else if (result.roll === 'bodeguero') {
 			// session variables
@@ -134,6 +138,7 @@ app.post('/login', (req, res) => {
 				show: 'Bienvenido Bodeguero',
 				path: '/dashboardproducts',
 				button: 'success',
+				icon: 'circle',
 			});
 		} else if (result.roll === 'cajero') {
 			// session variables
@@ -156,11 +161,13 @@ app.post('/login', (req, res) => {
 				show: 'Bienvenido Cajero',
 				path: '/dashboardcajero',
 				button: 'success',
+				icon: 'circle',
 			});
 		} else {
 			res.render('login', {
 				registro: req.body.registro,
 				show: 'Error',
+				icon: 'close',
 			});
 		}
 	});
