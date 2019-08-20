@@ -32,9 +32,9 @@ app.use(express.static(directoryPublic));
 
 // Middlewares
 app.use((req, res, next) => {
-	if (req.session.id) {
+	if (req.session._id) {
 		res.locals.session = true;
-		res.locals.user = req.session.id;
+		res.locals._id = req.session._id;
 		res.locals.firstname = req.session.firstname;
 		res.locals.lastname = req.session.lastname;
 		res.locals.usuario = req.session.usuario;

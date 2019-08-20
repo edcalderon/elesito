@@ -2,7 +2,6 @@
 require('.././config/config');
 const { APIKEY } = require('.././config/config');
 const express = require('express');
-
 const app = express();
 const path = require('path');
 const hbs = require('hbs');
@@ -72,8 +71,7 @@ app.post('/login', (req, res) => {
 			});
 		} else if (result.roll === 'administrador') {
 			// session variables
-			req.session.id = result._id
-			req.session.user = result.user;
+			req.session._id = result._id
 			req.session.sede = result.sede;
 			req.session.roll = result.roll;
 			req.session.firstname = result.firstname;
@@ -96,8 +94,7 @@ app.post('/login', (req, res) => {
 		} else if (result.roll === 'gerente') {
 
 			// session variables
-			req.session.id = result._id;
-			req.session.user = result.user;
+			req.session._id = result._id;
 			req.session.sede = result.sede;
 			req.session.roll = result.roll;
 			req.session.firstname = result.firstname;
@@ -119,8 +116,7 @@ app.post('/login', (req, res) => {
 			});
 		} else if (result.roll === 'bodeguero') {
 			// session variables
-			req.session.id = result._id;
-			req.session.user = result.user;
+			req.session._id = result._id;
 			req.session.sede = result.sede;
 			req.session.roll = result.roll;
 			req.session.firstname = result.firstname;
@@ -142,8 +138,7 @@ app.post('/login', (req, res) => {
 			});
 		} else if (result.roll === 'cajero') {
 			// session variables
-			req.session.id = result._id;
-			req.session.user = result.user;
+			req.session._id = result._id;
 			req.session.sede = result.sede;
 			req.session.roll = result.roll;
 			req.session.firstname = result.firstname;
@@ -185,7 +180,7 @@ app.post('/dashboardproduct', (req, res) => {
 		} else if (product) {
 			res.render('dashboardupdateproduct', product);
 		} else {
-			console.log(product);
+			
 		}
 	});
 });
@@ -323,7 +318,6 @@ app.post('/createproduct', upload.single('imagenProducto'), (req, res) => {
 	const product = new Product({
 		nombre, codigo, categoria, imagen: req.file.buffer, descripcion, precio
 	});
-
 	Product.findOne({ nombre }, (err, result) => {
 		if (err) {
 			return console.log(err);
@@ -350,9 +344,8 @@ app.post('/createproduct', upload.single('imagenProducto'), (req, res) => {
 			res.render('dashboardupdateproductwrong', product);
 		}
 	});
-
-
 });
+
 app.post('/deleteproduct', (req, res) => {
 	const { id } = req.body;
 	Product.deleteOne({ _id: id }, (err) => {
@@ -395,37 +388,11 @@ app.get('/shopingcart', (req, res) => {
 	});
 });
 
-
 app.get('/checkout', (req, res) => {
 	res.render('dashboardadmin', {
 		checkout: true,
 		productos: req.session.shopingcart,
 		cant: 1,
-	});
-});
-
-function total(id) {
-	console.log("editar input-" + id);
-}
-
-
-app.get('/dashboardadmin', (req, res) => {
-	Product.find({}, (err, result1) => {
-		if (err) {
-			console.log(err);
-		}
-		User.find({}, (error, result2) => {
-			if (error) {
-				console.log(error);
-			}
-			res.render('dashboardadmin', {
-				listar: req.query.listar,
-				listararticulos: req.query.listararticulos,
-				registrar: req.query.registrar,
-				usuarios: result2,
-				articulos: result1,
-			});
-		});
 	});
 });
 
@@ -491,6 +458,27 @@ app.get('/pay', (req, res) => {
 		});
 	});
 });
+
+app.get('/dashboardadmin', (req, res) => {
+	Product.find({}, (err, result1) => {
+		if (err) {
+			console.log(err);
+		}
+		User.find({}, (error, result2) => {
+			if (error) {
+				console.log(error);
+			}
+			res.render('dashboardadmin', {
+				listar: req.query.listar,
+				listararticulos: req.query.listararticulos,
+				registrar: req.query.registrar,
+				usuarios: result2,
+				articulos: result1,
+			});
+		});
+	});
+});
+
 app.post('/dashboardadmin', upload.single('imagenProducto'), (req, res) => {
 	if (req.query.listar) {
 		User.findOne({ cc: req.body.busqueda }, (err, results) => {
@@ -584,15 +572,23 @@ app.post('/dashboardupdateuser', (req, res) => {
 });
 
 app.get('/dashboardprofile', (req, res) => {
-	res.render('dashboardprofile', {
-	});
+	User.findOne(
+		{ _id: req.session._id } ,(err, resultado) => {
+			if (err) {
+				console.log(err);
+			} else {
+				res.render('dashboardprofile', {
+					esiPuntos: resultado.esiPuntos
+				});
+			}
+		},
+	);
 });
 
 app.post('/dashboardprofile', upload.single('userPhoto'), (req, res) => {
-	console.log(req.session.id)
 	if (req.body.avatar) {
 		User.findOneAndUpdate(
-			{ _id: req.session.id }, { $set: { avatar: req.file.buffer } }, { new: true },
+			{ _id: req.session._id }, { $set: { avatar: req.file.buffer } }, { new: true },
 			(err, resultado) => {
 				if (err) {
 					console.log(err);
@@ -622,7 +618,7 @@ app.post('/dashboardprofile', upload.single('userPhoto'), (req, res) => {
 		}
 
 		User.findOneAndUpdate(
-			{ _id: req.session.id }, { $set: conditions }, { new: true },
+			{ _id: req.session._id }, { $set: conditions }, { new: true },
 			(err, resultado) => {
 				if (err) {
 					console.log(err);
