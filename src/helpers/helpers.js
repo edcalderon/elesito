@@ -94,14 +94,14 @@ hbs.registerHelper('listarProductos', (productos) => {
 				texto += `
 				<form action="/updatestock" method="get>
 					<tr role="row" class="odd">
-						<td class="sorting_1 col-6">${prod.nombre}</td>
+						<td class="sorting_1">${prod.nombre}</td>
 						<td class="col-md-auto">${prod.precio}</td>
 						<td>${city}</td>
 						<td class="cell100 column4">   
 							<div class="inblock" >
-							<i id="edit" data-id="${prod._id}" class="fa fa-pencil" ></i>
-							<i id="delete" data-id="${prod._id}" class="fa fa-trash"></i>
-							<i id="shop" data-id="${prod.id}"  data-sede="${city}"class="fa fa-cart-plus cartshop"></i>
+							<button type="button" class="btn btn-outline-primary hidden"><i id="edit" data-id="${prod._id}" class="fa fa-pencil" >Editar&nbsp;&nbsp;</i></button>
+							<button type="button" class="btn btn-outline-danger"><i id="delete" data-id="${prod._id}" class="fa fa-trash">Eliminar&nbsp;&nbsp;</i></button>
+							<button type="button" class="btn btn-outline-success"><i id="shop" data-id="${prod.id}"  data-sede="${city}"class="fa fa-cart-plus cartshop">Añadir a cesta&nbsp;&nbsp;</i></button>
 							<input type="checkbox" data-id="${prod._id}" class="check"/> 
 							</div>
 						</td>
