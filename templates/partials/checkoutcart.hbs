@@ -121,9 +121,9 @@
     }
     function cliente() {
         const cedula_cliente = document.getElementById("cedula_cliente");
-        const totalBruto = document.getElementById("totalBruto").value;
-        const totalNeto  = document.getElementById("totalCompra").value;
-        var puntos_nuevos = parseInt(totalNeto / 2000)
+        const totalBruto = document.getElementById("totalBruto").innerText
+        const totalNeto  = document.getElementById("totalCompra").innerText;
+        var puntos_nuevos = parseInt(totalBruto / 2000)
             $.ajax({
                 method: "GET",
                 url: `/findUser?cedula=${cedula_cliente.value}`
