@@ -121,8 +121,11 @@
     }
     function cliente() {
         const cedula_cliente = document.getElementById("cedula_cliente");
-        const totalBruto = document.getElementById("totalBruto").innerText
+        var totalBruto = document.getElementById("totalBruto").innerText
         const totalNeto  = document.getElementById("totalCompra").innerText;
+        totalBruto = totalBruto.slice(1, totalBruto.length);
+        console.log(totalBruto)
+        console.log(totalNeto)  
         var puntos_nuevos = parseInt(totalBruto / 2000)
             $.ajax({
                 method: "GET",
