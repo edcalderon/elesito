@@ -20,7 +20,7 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "hbs": "^4.0.3",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "jsdom": "^14.0.0",
     "jsonwebtoken": "^8.5.1",
     "memorystore": "^1.6.1",
